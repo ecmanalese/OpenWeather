@@ -1,5 +1,6 @@
 import os
 import requests
+import pandas as pd
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,4 +21,18 @@ def get_weather_data():
     response = requests.get(API_URL)
     return response.json()
 
-print(get_weather_data())
+def weather_data_to_dataframe(weather_data):
+    df = pd.DataFrame({
+        'city': weather_data['name'],
+        'country': weather_data['sys']['country'],
+        'temperature': weather_data['main']['temp'],
+        'feels_like': weather_data['main']['feels_like'],
+        'temp_max': weather_data['main']['temp_max'],
+        'temp_min': weather_data['main']['temp_min'],
+        'pressure': weather_data['main']['pressure'],
+        'humidity': weather_data['main']['humidity'],
+        'weather_description': weather_data['weather'][0]['description']
+    }, index=[0])
+    return df
+    
+print(weather_data_to_dataframe(get_weather_data()))
